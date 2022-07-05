@@ -1,0 +1,6 @@
+# As close to production as possible
+services:
+  app:
+    image: myapp:test
+    ports:
+      - "3000"

@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  app:
+    image: ${IMAGE:-myapp}
+    environment:
+      - GIN_MODE=release      

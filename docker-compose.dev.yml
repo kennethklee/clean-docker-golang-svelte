@@ -1,0 +1,32 @@
+services:
+  app:
+    image: myapp:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: gobuilder
+      args:
+        VERSION: ${RELEASE_TAG}
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - ./app:/app
+    environment:
+      - VERSION=${RELEASE_TAG}
+      - GIN_MODE=debug
+    deploy:
+      replicas: 1
+  
+  web:
+    image: tco:web
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nodebuilder
+      args:
+        VERSION: ${RELEASE_TAG}
+    volumes:
+      - ./web:/web
+    environment:
+      - VERSION=${RELEASE_TAG}
+    command: sh -c 'npm install && npm run dev -- --host'
