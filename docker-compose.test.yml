@@ -2,5 +2,6 @@
 services:
   app:
     image: myapp:test
+    build: .
     ports:
       - "3000"

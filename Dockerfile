@@ -36,7 +36,8 @@ CMD ["/go/bin/air", "-c", "/app/air.toml"]
 
 # Run App
 # =======
-FROM scratch
+FROM debian:bookworm
+# FROM scratch
 
 WORKDIR /app
 

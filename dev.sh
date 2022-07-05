@@ -14,7 +14,7 @@ case $1 in
 
   up)
     shift
-    go mod tidy
+    (cd app && go mod tidy)
     version=`git describe --tags --dirty --always`
     RELEASE_TAG=${version} docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --remove-orphans "$@"
     $0 port
@@ -32,13 +32,13 @@ case $1 in
 
   restart)
     shift
-    go mod tidy
+    (cd app && go mod tidy)
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart ${1:-app web}
     ;;
 
   staging)
     shift
-    go mod tidy
+    (cd app && go mod tidy)
     docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build --remove-orphans "$@"
     $0 port
     ;;
