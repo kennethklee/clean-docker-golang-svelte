@@ -40,5 +40,6 @@ func proxy(host string) gin.HandlerFunc {
 }
 
 func main() {
+	fmt.Println("running server verion:", VERSION)
 	app.Run(":3000")
 }

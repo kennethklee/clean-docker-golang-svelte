@@ -1,6 +1,12 @@
 # docker-golang-svelte
 
-Opinionated starter boilerplate for golang & svelte server. Any statically compiled UI can be used in place of svelte.
+This is an example of golang & svelte application. NOTE: Any statically compiled UI can be used in place of svelte. Any server that can reverse proxy can be used in place of golang.
+
+The `app` directory contains the golang server.
+The `web` directory contains the nodejs server with svelte.
+
+A single Dockerfile binds them together.
+
 
 Getting Started
 ---------------

@@ -1,4 +1,4 @@
-module github.com/kennethklee/clean-docker-golang-svelte/app
+module github.com/kennethklee/docker-golang-svelte/app
 
 go 1.18
 

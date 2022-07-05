@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Change to your app's port
 PORT=3000
 
 case $1 in
@@ -16,7 +17,7 @@ case $1 in
     shift
     (cd app && go mod tidy)
     version=`git describe --tags --dirty --always`
-    RELEASE_TAG=${version} docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --remove-orphans "$@"
+    VERSION=${version} docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --remove-orphans "$@"
     $0 port
     ;;
   
@@ -39,7 +40,8 @@ case $1 in
   staging)
     shift
     (cd app && go mod tidy)
-    docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build --remove-orphans "$@"
+    version=`git describe --tags --dirty --always`
+    VERSION=${version} docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build --remove-orphans "$@"
     $0 port
     ;;
 

@@ -4,4 +4,4 @@ services:
   app:
     image: ${IMAGE:-myapp}
     environment:
-      - GIN_MODE=release      
+      - GIN_MODE=release

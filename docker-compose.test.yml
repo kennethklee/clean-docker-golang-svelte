@@ -2,6 +2,9 @@
 services:
   app:
     image: myapp:test
-    build: .
+    build: 
+      context: .
+      args:
+        VERSION: $VERSION
     ports:
       - "3000"
