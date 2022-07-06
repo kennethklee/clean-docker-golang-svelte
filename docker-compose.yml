@@ -2,6 +2,10 @@ version: '3.9'
 
 services:
   app:
-    image: ${IMAGE:-myapp}
+    image: $IMAGE
+    build: 
+      context: .
+      args:
+        VERSION: $VERSION
     environment:
-      - GIN_MODE=release
+      - APP_ENV=production

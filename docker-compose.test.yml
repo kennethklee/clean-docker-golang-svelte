@@ -2,9 +2,7 @@
 services:
   app:
     image: myapp:test
-    build: 
-      context: .
-      args:
-        VERSION: $VERSION
     ports:
       - "3000"
+    environment:
+      - APP_ENV=test

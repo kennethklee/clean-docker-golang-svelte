@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Change to your app's port
+# Config
 PORT=3000
+
 
 case $1 in
   init)
@@ -37,25 +38,6 @@ case $1 in
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart ${1:-app web}
     ;;
 
-  staging)
-    shift
-    (cd app && go mod tidy)
-    version=`git describe --tags --dirty --always`
-    VERSION=${version} docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build --remove-orphans "$@"
-    $0 port
-    ;;
-
-  ps)
-    docker-compose -f docker-compose.yml -f docker-compose.dev.yml "$@"
-    ;;
-
-  logs)
-    shift
-    service=${1:-app}
-    shift
-    docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs --tail 100 -f "$@" ${service}
-    ;;
-
   test)
     shift
     $0 test-app
@@ -70,6 +52,39 @@ case $1 in
   test-web)
     shift
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec -e web npm test "$@"
+    ;;
+
+  staging)
+    shift
+    (cd app && go mod tidy)
+    version=`git describe --tags --dirty --always`
+    VERSION=${version} docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build --remove-orphans "$@"
+    $0 port
+    ;;
+  
+  build)
+    shift
+    # ensure IMAGE is set
+    if [ -z "${IMAGE}" ]; then
+      echo "IMAGE is not set. Set the target docker image name like 'IMAGE=myusername/myproject:1.0.0 ./dev.sh build'"
+      exit 1
+    fi
+    (cd app && go mod tidy)
+    version=`git describe --tags`
+    VERSION=${version} docker-compose build app
+    ;;
+
+
+  # Helper commands
+  ps)
+    docker-compose -f docker-compose.yml -f docker-compose.dev.yml "$@"
+    ;;
+
+  logs)
+    shift
+    service=${1:-app}
+    shift
+    docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs --tail 100 -f "$@" ${service}
     ;;
 
   shell)
@@ -91,10 +106,16 @@ case $1 in
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec web "$@"
     ;;
 
-  ping)
-    docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec app curl 0:${PORT}/ping
-    echo
-    ;;
+  # Optional:
+  # db)
+  #   shift
+  #   docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec db ${@:-psql -U postgres}
+  #   ;;
+  #
+  # smoke)
+  #   docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec app curl 0:${PORT}/ping
+  #   echo
+  #   ;;
 
   *)
     echo "usage: $0 <command>"
@@ -106,16 +127,21 @@ case $1 in
     echo "stop [service]   stop stack"
     echo "down [service]   tear down stack"
     echo "restart [service] restart app"
-    echo "staging          start staging stack"
-    echo "ps               list running docker containers"
-    echo "logs [service]   show app logs"
     echo "test <args>      run tests"
+    echo "staging          start staging stack"
+    echo "build            builds final image. IMAGE must be set"
     echo
     echo "Helper commands:"
+    echo "ps               list running docker containers"
+    echo "logs [service]   show app logs"
     echo "shell [service]  shell prompt"
     echo "compose <args>   docker-compose commands"
     echo "npm <args>       npm commands"
     echo "npx <args>       npx commands"
+    
+    # Optional:
+    # echo "db               psql prompt"
+    # echo "smoke            smoke test"
     ;;
 
 esac
