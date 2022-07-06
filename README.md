@@ -62,7 +62,7 @@ There's two modes: development and production modes.
 
 ### Production Mode
 
-Production mode is what you use to deploy a production-ready app.
+Production mode is what you use to deploy a production-ready app. Build with `IMAGE=username/project:1.0.0 ./dev.sh build`.
 
 The golang app will to serve the `/static` directory when it detects this mode.
 
