@@ -36,7 +36,9 @@ Usage (and reproduction steps)
 
 The core of the structure is the root files. They control how the whole application is assembled.
 
-Here are the steps to reproduce the structure for your own project:
+TLDR; To make it your own: copy root files over and create golang in `./app` and nodejs in `./web`. The `./app` will need to serve `./static` for production, and reverse proxy `web:3000` for development.
+
+Here are the steps to reproduce the structure for your own project, as well as some areas to edit:
 
 1. Copy `dev.sh`. Change PORT, add extra helper commands (like `db`), add loading test fixtures in `init` section. This is application task runner.
 2. Copy all `docker-compose.yml` related files, rename images, add environment variables and other services (like `db`).
@@ -62,22 +64,28 @@ There's two modes: development and production modes.
 
 Production mode is what you use to deploy a production-ready app.
 
-The golang app will need to serve the `/static` directory when it detects any non-development mode.
+The golang app will to serve the `/static` directory when it detects this mode.
 
-In production mode, a single `scratch` image is built to run the complete app within a single service. It's built with multi-stage builders, `nodebuilder` and `gobuilder`. Their output is combined into a `scratch` image, where the binary is placed in `/app` and the static UI files are placed in `/static`.
+A `scratch` image is built to run the complete app within a single service. It's built with multi-stage builders, `nodebuilder` and `gobuilder`. The `nodebuilder` builds static files. The `gobuilder` builds the app binary. They are combined into a `scratch` image with `/app` as the binary while `/static` contains the static files.
 
 ### Development Mode
 
 In development mode, two services start; one `web` running `nodejs` image and the other `app` running `golang` image.
 
-The golang app will need to erve its API endpoints and reverse proxy to the `web` layer when it detects development mode.
+The golang app serve its API endpoints and reverse proxy to the `web` layer when it detects development mode.
 
 Each layer is independent and testable: `./dev.sh test` to test both layers.
 
 ### app layer
 
-Code changes trigger live-reload thanks to air. Run tests with `./dev.sh test-app`.
+Code changes trigger live-reload thanks to air.
+
+- Run tests with `./dev.sh test-app`
+- Follow logs with `./dev.sh logs`
 
 #### web layer
 
-Code changes will trigger hot-reload thanks to vite. Run tests with `./dev.sh test-web`.
+Code changes will trigger hot-reload thanks to vite.
+
+- Run tests with `./dev.sh test-web`
+- Follow logs with `./dev.sh logs web`
